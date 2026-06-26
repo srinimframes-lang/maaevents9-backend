@@ -12,7 +12,24 @@ const eventRoutes = require("./routes/eventRoutes");
 
 const app = express();
 
-connectDB();
+connectDB();const Admin = require("./models/Admin");
+setTimeout(async () => {
+  try {
+    const existing = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+    if (!existing) {
+      await Admin.create({
+        name: "Super Admin",
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
+      });
+      console.log("✅ Admin auto-created:", process.env.ADMIN_EMAIL);
+    } else {
+      console.log("Admin already exists");
+    }
+  } catch (err) {
+    console.log("Admin seed error:", err.message);
+  }
+}, 3000);
 
 app.use(helmet());
 app.use(compression());
